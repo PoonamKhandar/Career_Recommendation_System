@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Portal — AI Career Guide</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #0f1729;
+    --surface2: #1a2235;
+    --border: rgba(59,130,246,0.18);
+    --blue: #2563eb;
+    --blue-light: #60a5fa;
+    --purple: #7c3aed;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --dim: #475569;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+
+  /* ── Login Screen ── */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 30% 20%, rgba(37,99,235,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(124,58,237,0.10) 0%, transparent 60%);
+  }
+  .login-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  }
+  .login-logo {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; margin: 0 auto 24px;
+  }
+  .login-card h1 { text-align: center; font-size: 1.5rem; margin-bottom: 4px; }
+  .login-card p { text-align: center; color: var(--muted); margin-bottom: 32px; font-size: 0.9rem; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
+  .form-group input {
+    width: 100%; padding: 12px 16px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text); font-size: 0.95rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: var(--blue); }
+  .btn-primary {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border: none; border-radius: 10px; color: white;
+    font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    transition: opacity 0.2s; margin-top: 8px;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .login-error {
+    background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 8px; padding: 10px 14px; color: #fca5a5;
+    font-size: 0.85rem; margin-top: 14px; display: none; text-align: center;
+  }
+
+  /* ── Dashboard ── */
+  #dashboard { display: none; flex-direction: column; min-height: 100vh; }
+
+  /* Topbar */
+  .topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 28px; height: 62px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  }
+  .topbar-title { font-weight: 700; font-size: 1.05rem; }
+  .topbar-subtitle { color: var(--muted); font-size: 0.78rem; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .admin-badge {
+    background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4);
+    color: #a78bfa; border-radius: 20px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600;
+  }
+  .btn-logout {
+    background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25);
+    color: #fca5a5; border-radius: 8px; padding: 7px 16px;
+    font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-logout:hover { background: rgba(239,68,68,0.22); }
+
+  /* Layout */
+  .main-layout { display: flex; flex: 1; }
+  .sidebar {
+    width: 220px; background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 12px; display: flex; flex-direction: column; gap: 4px;
+    position: sticky; top: 62px; height: calc(100vh - 62px); overflow-y: auto;
+  }
+  .sidebar-label { font-size: 0.7rem; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 10px 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 9px; cursor: pointer;
+    color: var(--muted); font-size: 0.88rem; transition: all 0.15s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(37,99,235,0.15); color: var(--blue-light); }
+  .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  /* Content */
+  .content { flex: 1; padding: 28px; overflow-y: auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .page-header { margin-bottom: 24px; }
+  .page-header h2 { font-size: 1.4rem; font-weight: 700; }
+  .page-header p { color: var(--muted); font-size: 0.88rem; margin-top: 4px; }
+
+  /* Stat Cards */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px 24px;
+  }
+  .stat-card .label { color: var(--muted); font-size: 0.8rem; margin-bottom: 10px; }
+  .stat-card .value { font-size: 2rem; font-weight: 700; }
+  .stat-card .sub { color: var(--muted); font-size: 0.78rem; margin-top: 4px; }
+  .stat-blue .value { color: var(--blue-light); }
+  .stat-green .value { color: #34d399; }
+  .stat-purple .value { color: #a78bfa; }
+  .stat-yellow .value { color: #fbbf24; }
+
+  /* Tables */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; margin-bottom: 20px;
+  }
+  .card-header {
+    padding: 18px 22px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-header h3 { font-size: 1rem; font-weight: 600; }
+  .card-body { padding: 0; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--surface2); padding: 11px 16px;
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--muted); text-align: left; border-bottom: 1px solid var(--border);
+  }
+  td { padding: 13px 16px; font-size: 0.87rem; border-bottom: 1px solid rgba(100,116,139,0.1); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+  }
+  .badge-green { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-red { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+  .badge-blue { background: rgba(37,99,235,0.15); color: var(--blue-light); border: 1px solid rgba(37,99,235,0.3); }
+  .badge-yellow { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+
+  /* Controls */
+  .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .search-input {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px; color: var(--text);
+    font-size: 0.85rem; outline: none; width: 220px; transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--blue); }
+  .btn-sm {
+    padding: 8px 16px; border-radius: 8px; font-size: 0.83rem;
+    cursor: pointer; border: none; font-weight: 500; transition: all 0.2s;
+  }
+  .btn-danger { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+  .btn-danger:hover { background: rgba(239,68,68,0.28); }
+  .btn-info { background: rgba(37,99,235,0.15); color: var(--blue-light); border: 1px solid rgba(37,99,235,0.3); }
+  .btn-info:hover { background: rgba(37,99,235,0.28); }
+  .btn-success { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .btn-success:hover { background: rgba(16,185,129,0.28); }
+
+  /* Charts */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+  .bar-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .bar-label { font-size: 0.82rem; color: var(--muted); width: 140px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; background: var(--surface2); border-radius: 4px; height: 8px; }
+  .bar-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--blue), var(--purple)); transition: width 0.6s ease; }
+  .bar-count { font-size: 0.8rem; color: var(--muted); width: 24px; text-align: right; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; max-width: 520px; width: 90%;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal h3 { font-size: 1.1rem; margin-bottom: 16px; }
+  .modal-close {
+    float: right; background: none; border: none; color: var(--muted);
+    font-size: 1.3rem; cursor: pointer; margin-top: -4px;
+  }
+  .detail-row { display: flex; margin-bottom: 10px; font-size: 0.88rem; }
+  .detail-label { color: var(--muted); width: 120px; flex-shrink: 0; }
+  .detail-value { color: var(--text); }
+  .rec-card {
+    background: var(--surface2); border-radius: 10px;
+    padding: 14px; margin-bottom: 10px; border: 1px solid var(--border);
+  }
+  .rec-card h4 { color: var(--blue-light); font-size: 0.9rem; margin-bottom: 6px; }
+  .rec-card p { color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
+
+  /* Settings */
+  .settings-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px; margin-bottom: 16px;
+  }
+  .settings-card h3 { font-size: 1rem; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .setting-info .setting-name { font-size: 0.9rem; }
+  .setting-info .setting-desc { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+  .setting-val { color: var(--blue-light); font-size: 0.88rem; font-family: monospace; background: var(--surface2); padding: 4px 10px; border-radius: 6px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Loader */
+  .loader { text-align: center; padding: 40px; color: var(--muted); }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 20px; font-size: 0.88rem;
+    opacity: 0; transition: opacity 0.25s; pointer-events: none;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  #toast.show { opacity: 1; }
+  #toast.success { border-color: rgba(16,185,129,0.4); color: #34d399; }
+  #toast.error { border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+
+  .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; }
+  .chip { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 2px 9px; font-size: 0.75rem; color: var(--muted); margin: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">🛡️</div>
+    <h1>Admin Portal</h1>
+    <p>AI Career Guide — Restricted Access</p>
+    <div class="form-group">
+      <label>Admin Username</label>
+      <input type="text" id="adminUser" placeholder="Enter username" autocomplete="off"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="adminPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign In to Admin Portal</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dashboard">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🎓</div>
+      <div>
+        <div class="topbar-title">AI Career Guide</div>
+        <div class="topbar-subtitle">Admin Dashboard</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="admin-badge" id="adminNameBadge">👤 Admin</span>
+      <button class="btn-logout" onclick="doLogout()">⏻ Logout</button>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-label">Overview</div>
+      <button class="nav-item active" onclick="showPage('overview', this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+      <div class="sidebar-label">Data</div>
+      <button class="nav-item" onclick="showPage('users', this)">
+        <span class="nav-icon">👥</span> Registered Users
+      </button>
+      <button class="nav-item" onclick="showPage('guidance', this)">
+        <span class="nav-icon">🧠</span> Career Queries
+      </button>
+      <button class="nav-item" onclick="showPage('careers', this)">
+        <span class="nav-icon">📈</span> Top Careers
+      </button>
+      <div class="sidebar-label">System</div>
+      <button class="nav-item" onclick="showPage('settings', this)">
+        <span class="nav-icon">⚙️</span> Settings
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- OVERVIEW PAGE -->
+      <div class="page active" id="page-overview">
+        <div class="page-header">
+          <h2>Dashboard Overview</h2>
+          <p>Welcome back! Here's what's happening in your platform.</p>
+        </div>
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card stat-blue">
+            <div class="label">Registered Users</div>
+            <div class="value" id="statRegUsers">—</div>
+            <div class="sub">Auth accounts</div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="label">Career Queries</div>
+            <div class="value" id="statQueries">—</div>
+            <div class="sub">Total searches</div>
+          </div>
+          <div class="stat-card stat-purple">
+            <div class="label">Recommendations</div>
+            <div class="value" id="statRecs">—</div>
+            <div class="sub">AI generated</div>
+          </div>
+          <div class="stat-card stat-yellow">
+            <div class="label">Verified Users</div>
+            <div class="value" id="statVerified">—</div>
+            <div class="sub">Email confirmed</div>
+          </div>
+        </div>
+        <div class="chart-grid">
+          <div class="card">
+            <div class="card-header"><h3>🏆 Top Career Recommendations</h3></div>
+            <div class="card-body" style="padding: 20px;" id="topCareersChart">
+              <div class="loader"><div class="spinner"></div>Loading...</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📋 Recent Activity</h3></div>
+            <div class="card-body" style="padding: 20px;" id="recentActivity">
+              <div class="loader"><div class="spinner"></div>Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTERED USERS PAGE -->
+      <div class="page" id="page-users">
+        <div class="page-header">
+          <h2>Registered Users</h2>
+          <p>All users who created an account via Auth (email + password).</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Auth Users</h3>
+            <div class="controls">
+              <input class="search-input" id="searchAuthUsers" placeholder="🔍 Search by name or email..." oninput="filterAuthUsers()"/>
+              <button class="btn-sm btn-success" onclick="loadAuthUsers()">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="card-body" id="authUsersTable">
+            <div class="loader"><div class="spinner"></div>Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAREER QUERIES PAGE -->
+      <div class="page" id="page-guidance">
+        <div class="page-header">
+          <h2>Career Queries</h2>
+          <p>All student profiles that requested AI career guidance.</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>All Queries</h3>
+            <div class="controls">
+              <input class="search-input" id="searchQueries" placeholder="🔍 Search by name..." oninput="filterQueries()"/>
+              <button class="btn-sm btn-success" onclick="loadGuidanceUsers()">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="card-body" id="guidanceTable">
+            <div class="loader"><div class="spinner"></div>Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP CAREERS PAGE -->
+      <div class="page" id="page-careers">
+        <div class="page-header">
+          <h2>Top Career Recommendations</h2>
+          <p>Most recommended careers by the AI across all users.</p>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Career Frequency</h3></div>
+          <div class="card-body" id="careersTable">
+            <div class="loader"><div class="spinner"></div>Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS PAGE -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <h2>System Settings</h2>
+          <p>View your current backend configuration.</p>
+        </div>
+        <div class="settings-card">
+          <h3>🔑 API & Email Configuration</h3>
+          <div id="settingsContent">
+            <div class="loader"><div class="spinner"></div>Loading...</div>
+          </div>
+        </div>
+        <div class="settings-card">
+          <h3>🛡️ Admin Credentials</h3>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Admin Username</div>
+              <div class="setting-desc">Set in .env as ADMIN_USERNAME</div>
+            </div>
+            <div class="setting-val" id="settingAdminUser">—</div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Change Password</div>
+              <div class="setting-desc">Update ADMIN_PASSWORD in your .env file and restart the server</div>
+            </div>
+            <span class="badge badge-yellow">Via .env file</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-layout -->
+</div><!-- /dashboard -->
+
+<!-- User Detail Modal -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">User Details</h3>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="max-width: 380px;">
+    <h3>⚠️ Confirm Delete</h3>
+    <p style="color: var(--muted); font-size: 0.88rem; margin: 12px 0 22px;">This will permanently delete this user and all their data. This cannot be undone.</p>
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button class="btn-sm btn-info" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-sm btn-danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const BASE = '';
+let SESSION_TOKEN = null;
+let allAuthUsers = [];
+let allGuidanceUsers = [];
+
+// ── Auth ──────────────────────────────────────
+async function doLogin() {
+  const username = document.getElementById('adminUser').value.trim();
+  const password = document.getElementById('adminPass').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+
+  if (!username || !password) {
+    showLoginError('Please enter both username and password.');
+    return;
+  }
+
+  try {
+    const res = await fetch(BASE + '/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username, password})
+    });
+    const data = await res.json();
+    if (data.success) {
+      SESSION_TOKEN = data.token;
+      document.getElementById('adminNameBadge').textContent = '👤 ' + (data.username || 'Admin');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'flex';
+      loadOverview();
+    } else {
+      showLoginError(data.error || 'Invalid credentials.');
+    }
+  } catch(e) {
+    showLoginError('Cannot connect to server. Make sure Flask is running.');
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function doLogout() {
+  SESSION_TOKEN = null;
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminUser').value = '';
+  document.getElementById('adminPass').value = '';
+}
+
+function authHeaders() {
+  return {'Content-Type': 'application/json', 'X-Admin-Token': SESSION_TOKEN};
+}
+
+// ── Navigation ────────────────────────────────
+function showPage(page, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  btn.classList.add('active');
+
+  if (page === 'overview') loadOverview();
+  else if (page === 'users') loadAuthUsers();
+  else if (page === 'guidance') loadGuidanceUsers();
+  else if (page === 'careers') loadTopCareers();
+  else if (page === 'settings') loadSettings();
+}
+
+// ── Overview ──────────────────────────────────
+async function loadOverview() {
+  try {
+    const [statsRes, recentRes] = await Promise.all([
+      fetch(BASE + '/admin/stats', {headers: authHeaders()}),
+      fetch(BASE + '/admin/recent-activity', {headers: authHeaders()})
+    ]);
+    const stats = await statsRes.json();
+    const recent = await recentRes.json();
+
+    if (stats.success) {
+      document.getElementById('statRegUsers').textContent = stats.registered_users;
+      document.getElementById('statQueries').textContent = stats.total_queries;
+      document.getElementById('statRecs').textContent = stats.total_recommendations;
+      document.getElementById('statVerified').textContent = stats.verified_users;
+
+      // Top careers chart
+      const chartEl = document.getElementById('topCareersChart');
+      if (stats.top_careers && stats.top_careers.length) {
+        const max = stats.top_careers[0].count;
+        chartEl.innerHTML = stats.top_careers.map(c => `
+          <div class="bar-item">
+            <div class="bar-label" title="${c.career}">${c.career}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(c.count/max*100).toFixed(1)}%"></div></div>
+            <div class="bar-count">${c.count}</div>
+          </div>`).join('');
+      } else {
+        chartEl.innerHTML = '<div class="empty-state">No data yet</div>';
+      }
+    }
+
+    // Recent activity
+    const actEl = document.getElementById('recentActivity');
+    if (recent.success && recent.activities.length) {
+      actEl.innerHTML = recent.activities.map(a => `
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;">
+          <span style="font-size:1.1rem">${a.icon}</span>
+          <div>
+            <div style="font-size:0.85rem;">${a.message}</div>
+            <div style="font-size:0.75rem;color:var(--dim);margin-top:2px;">${a.time}</div>
+          </div>
+        </div>`).join('');
+    } else {
+      actEl.innerHTML = '<div class="empty-state">No recent activity</div>';
+    }
+  } catch(e) {
+    showToast('Failed to load overview', 'error');
+  }
+}
+
+// ── Auth Users ────────────────────────────────
+async function loadAuthUsers() {
+  document.getElementById('authUsersTable').innerHTML = '<div class="loader"><div class="spinner"></div>Loading...</div>';
+  try {
+    const res = await fetch(BASE + '/admin/auth-users', {headers: authHeaders()});
+    const data = await res.json();
+    if (data.success) {
+      allAuthUsers = data.users;
+      renderAuthUsers(allAuthUsers);
+    }
+  } catch(e) { showToast('Failed to load users', 'error'); }
+}
+
+function filterAuthUsers() {
+  const q = document.getElementById('searchAuthUsers').value.toLowerCase();
+  renderAuthUsers(allAuthUsers.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
+}
+
+function renderAuthUsers(users) {
+  const el = document.getElementById('authUsersTable');
+  if (!users.length) { el.innerHTML = '<div class="empty-state">No users found</div>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr>
+      <th>#</th><th>Name</th><th>Email</th><th>Status</th><th>Joined</th><th>Action</th>
+    </tr></thead>
+    <tbody>${users.map((u,i) => `<tr>
+      <td>${u.id}</td>
+      <td><strong>${u.name}</strong></td>
+      <td style="color:var(--muted)">${u.email}</td>
+      <td>${u.verified ? '<span class="badge badge-green">✓ Verified</span>' : '<span class="badge badge-yellow">Pending</span>'}</td>
+      <td style="color:var(--muted)">${formatDate(u.created_at)}</td>
+      <td>
+        <button class="btn-sm btn-danger" onclick="deleteAuthUser(${u.id}, '${u.email}')">🗑️ Delete</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+// ── Guidance Users ────────────────────────────
+async function loadGuidanceUsers() {
+  document.getElementById('guidanceTable').innerHTML = '<div class="loader"><div class="spinner"></div>Loading...</div>';
+  try {
+    const res = await fetch(BASE + '/get-all-users', {headers: authHeaders()});
+    const data = await res.json();
+    if (data.success) {
+      allGuidanceUsers = data.users;
+      renderGuidanceUsers(allGuidanceUsers);
+    }
+  } catch(e) { showToast('Failed to load queries', 'error'); }
+}
+
+function filterQueries() {
+  const q = document.getElementById('searchQueries').value.toLowerCase();
+  renderGuidanceUsers(allGuidanceUsers.filter(u => u.name.toLowerCase().includes(q)));
+}
+
+function renderGuidanceUsers(users) {
+  const el = document.getElementById('guidanceTable');
+  if (!users.length) { el.innerHTML = '<div class="empty-state">No queries found</div>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr>
+      <th>#</th><th>Name</th><th>Education</th><th>%</th><th>Date</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${users.map(u => `<tr>
+      <td>${u.id}</td>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.education}</td>
+      <td><span class="badge ${u.percentage >= 75 ? 'badge-green' : u.percentage >= 50 ? 'badge-blue' : 'badge-red'}">${u.percentage}%</span></td>
+      <td style="color:var(--muted)">${formatDate(u.created_at)}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn-sm btn-info" onclick="viewGuidanceUser(${u.id})">👁️ View</button>
+        <button class="btn-sm btn-danger" onclick="deleteGuidanceUser(${u.id})">🗑️</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+async function viewGuidanceUser(id) {
+  try {
+    const res = await fetch(BASE + '/get-user-history/' + id, {headers: authHeaders()});
+    const data = await res.json();
+    if (!data.success) return showToast('Failed to load user details', 'error');
+    const u = data.user;
+    const recs = data.recommendations;
+    document.getElementById('modalTitle').textContent = '👤 ' + u.name;
+    document.getElementById('modalContent').innerHTML = `
+      <div class="detail-row"><span class="detail-label">Education</span><span class="detail-value">${u.education}</span></div>
+      <div class="detail-row"><span class="detail-label">Percentage</span><span class="detail-value">${u.percentage}%</span></div>
+      <div class="detail-row"><span class="detail-label">Skills</span><span class="detail-value">${u.skills.map(s=>`<span class="chip">${s}</span>`).join('')}</span></div>
+      <div class="detail-row"><span class="detail-label">Interests</span><span class="detail-value">${u.interests.map(i=>`<span class="chip">${i}</span>`).join('')}</span></div>
+      <div class="detail-row"><span class="detail-label">Date</span><span class="detail-value">${formatDate(u.created_at)}</span></div>
+      <hr style="border-color:var(--border);margin:16px 0"/>
+      <p style="color:var(--muted);font-size:0.82rem;margin-bottom:12px;">AI Recommendations (${recs.length})</p>
+      ${recs.map(r => `<div class="rec-card"><h4>🎯 ${r.career}</h4><p>${r.explanation}</p></div>`).join('') || '<div class="empty-state">No recommendations yet</div>'}
+    `;
+    document.getElementById('userModal').classList.add('open');
+  } catch(e) { showToast('Error loading details', 'error'); }
+}
+
+function closeModal() { document.getElementById('userModal').classList.remove('open'); }
+
+// ── Top Careers ───────────────────────────────
+async function loadTopCareers() {
+  document.getElementById('careersTable').innerHTML = '<div class="loader"><div class="spinner"></div>Loading...</div>';
+  try {
+    const res = await fetch(BASE + '/stats', {headers: authHeaders()});
+    const data = await res.json();
+    if (data.success) {
+      const careers = data.stats.top_careers;
+      if (!careers.length) { document.getElementById('careersTable').innerHTML = '<div class="empty-state">No recommendations yet</div>'; return; }
+      const max = careers[0].count;
+      document.getElementById('careersTable').innerHTML = `<table>
+        <thead><tr><th>Rank</th><th>Career</th><th>Count</th><th>Share</th></tr></thead>
+        <tbody>${careers.map((c, i) => `<tr>
+          <td><span class="badge ${i===0?'badge-yellow':i===1?'badge-blue':'badge-green'}">#${i+1}</span></td>
+          <td><strong>${c.career}</strong></td>
+          <td>${c.count}</td>
+          <td>
+            <div class="bar-track" style="width:120px">
+              <div class="bar-fill" style="width:${(c.count/max*100).toFixed(1)}%"></div>
+            </div>
+          </td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+    }
+  } catch(e) { showToast('Failed to load careers', 'error'); }
+}
+
+// ── Settings ──────────────────────────────────
+async function loadSettings() {
+  try {
+    const res = await fetch(BASE + '/admin/config', {headers: authHeaders()});
+    const data = await res.json();
+    if (data.success) {
+      const c = data.config;
+      document.getElementById('settingsContent').innerHTML = `
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">OpenAI API Key</div><div class="setting-desc">Used for career recommendations</div></div>
+          <div class="setting-val">${c.openai_key}</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Email (SMTP)</div><div class="setting-desc">Used for OTP delivery</div></div>
+          <div class="setting-val">${c.email_user || 'Not set (dev mode)'}</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">SMTP Server</div><div class="setting-desc">Mail server host</div></div>
+          <div class="setting-val">${c.smtp_server}:${c.smtp_port}</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">OTP Expiry</div><div class="setting-desc">Minutes before OTP expires</div></div>
+          <div class="setting-val">${c.otp_expiry} minutes</div>
+        </div>
+      `;
+      document.getElementById('settingAdminUser').textContent = data.admin_username;
+    }
+  } catch(e) { showToast('Failed to load settings', 'error'); }
+}
+
+// ── Delete handlers ───────────────────────────
+let pendingDelete = null;
+
+function deleteAuthUser(id, email) {
+  pendingDelete = async () => {
+    const res = await fetch(BASE + '/admin/delete-auth-user/' + id, {method: 'DELETE', headers: authHeaders()});
+    const data = await res.json();
+    if (data.success) { showToast('User deleted', 'success'); loadAuthUsers(); }
+    else showToast(data.error || 'Delete failed', 'error');
+  };
+  document.getElementById('confirmDeleteBtn').onclick = async () => { closeDeleteModal(); await pendingDelete(); };
+  document.getElementById('deleteModal').classList.add('open');
+}
+
+function deleteGuidanceUser(id) {
+  pendingDelete = async () => {
+    const res = await fetch(BASE + '/delete-user/' + id, {method: 'DELETE', headers: authHeaders()});
+    const data = await res.json();
+    if (data.success) { showToast('Query deleted', 'success'); loadGuidanceUsers(); }
+    else showToast(data.error || 'Delete failed', 'error');
+  };
+  document.getElementById('confirmDeleteBtn').onclick = async () => { closeDeleteModal(); await pendingDelete(); };
+  document.getElementById('deleteModal').classList.add('open');
+}
+
+function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('open'); }
+
+// ── Utils ─────────────────────────────────────
+function formatDate(dt) {
+  if (!dt) return '—';
+  return new Date(dt).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+  t.className = 'show ' + type;
+  setTimeout(() => { t.className = ''; }, 3000);
+}
+
+// Close modals on overlay click
+document.getElementById('userModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeModal(); });
+document.getElementById('deleteModal').addEventListener('click', e => { if(e.target === e.currentTarget) closeDeleteModal(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Guide - Expandable View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a2332 50%, #2d3b4e 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2.5rem;
+        }
+
+        .auth-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            z-index: 1000;
+        }
+
+        .auth-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        }
+
+        .user-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: rgba(26, 35, 50, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 10px;
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .user-name {
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .logout-btn {
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #fca5a5;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(248, 113, 113, 0.3);
+            color: #f1f5f9;
+        }
+
+        .history-link {
+            padding: 8px 16px;
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            color: #93c5fd;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .history-link:hover {
+            background: rgba(37, 99, 235, 0.3);
+            color: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .highlight {
+            color: #3b82f6;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+
+        .form-container {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: #e2e8f0;
+            font-size: 1rem;
+            gap: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(71, 85, 105, 0.5);
+            border-radius: 12px;
+            background: rgba(10, 14, 26, 0.85);
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(10, 14, 26, 0.8);
+        }
+
+        .input-with-button {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-with-button input {
+            flex: 1;
+        }
+
+        .add-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            color: #c084fc;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag .remove-btn {
+            background: none;
+            border: none;
+            color: #c084fc;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .tag .remove-btn:hover {
+            color: #f1f5f9;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .error {
+            color: #f87171;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            background: rgba(26, 35, 50, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(37, 99, 235, 0.4);
+        }
+
+        .spinner {
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            border-top: 3px solid #8b5cf6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-page {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .results-page.show {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .results-header h2 {
+            font-size: 2.5rem;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+
+        .results-header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Expandable Career Cards */
+        .career-card-compact {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .career-card-compact:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .career-card-compact.expanded {
+            border-color: rgba(139, 92, 246, 0.6);
+        }
+
+        .career-card-header {
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+        }
+
+        .career-title-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .career-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(37, 99, 235, 0.2);
+            border-radius: 15px;
+        }
+
+        .career-title-info {
+            flex: 1;
+        }
+
+        .career-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .career-quick-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .match-badge {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .salary-badge {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid rgba(251, 146, 60, 0.3);
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            color: #3b82f6;
+            transition: transform 0.3s ease;
+        }
+
+        .career-card-compact.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .career-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .career-card-compact.expanded .career-details {
+            max-height: 10000px;
+        }
+
+        .career-content {
+            padding: 0 30px 30px 30px;
+        }
+
+        .career-description {
+            color: #d4d4d8;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-section {
+            background: rgba(10, 14, 26, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #3b82f6;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .strengths-list, .development-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .strengths-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #22c55e;
+            font-weight: 500;
+        }
+
+        .strengths-list li::before {
+            content: '✓';
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .development-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #f59e0b;
+            font-weight: 500;
+        }
+
+        .development-list li::before {
+            content: '→';
+            color: #f59e0b;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .progression-path {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .progression-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 10px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .step-title {
+            color: #f1f5f9;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .salary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .salary-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .salary-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .salary-amount {
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .industry-insights {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .industry-insights h4 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+            font-size: 0.92rem;
+        }
+
+        .insight-item::before {
+            content: '📈';
+            flex-shrink: 0;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(37, 99, 235, 0.4);
+            color: #c084fc;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+        }
+
+        .roadmap-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+
+        .phase-card {
+            background: rgba(10, 14, 26, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .phase-number {
+            width: 40px;
+            height: 40px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .phase-info h4 {
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .phase-duration {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .skills-section {
+            margin-bottom: 18px;
+        }
+
+        .skills-section h5 {
+            color: #c084fc;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .resources-section h5 {
+            color: #60a5fa;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .resource-card {
+            background: rgba(10, 14, 26, 0.85);
+            border: 1px solid rgba(100, 100, 100, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.2s;
+            display: block;
+        }
+
+        .resource-card:hover {
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+        }
+
+        .resource-name {
+            font-size: 0.88rem;
+            margin-bottom: 6px;
+        }
+
+        .resource-type {
+            font-size: 0.72rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .type-free {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .type-paid {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        .type-freemium {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+        }
+
+        .certifications-section {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .certifications-section h4 {
+            margin-bottom: 14px;
+            font-size: 1.05rem;
+        }
+
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .cert-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .click-hint {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 1200px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .salary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .results-header h2 {
+                font-size: 2rem;
+            }
+
+            .career-title {
+                font-size: 1.4rem;
+            }
+
+            .career-title-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Section -->
+    <div id="authSection"></div>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Analyzing Your Profile...</h3>
+            <p style="color: #94a3b8; margin-top: 10px;">Generating comprehensive career recommendations</p>
+        </div>
+    </div>
+
+    <div class="container" id="mainPage">
+        <div class="header">
+            <div class="header-icon">🤖</div>
+            <h1><span class="highlight"></span> Career Guide</h1>
+            <p>Discover your ideal career path with comprehensive analysis</p>
+        </div>
+
+        <div class="form-container">
+            <form id="careerForm">
+                <div class="form-group">
+                    <label>👤 Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name" required>
+                    <div class="error" id="nameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>🎓 Education Level</label>
+                    <select id="education" required>
+                        <option value="">Select your education level</option>
+                        <option value="high_school">High School (10th/12th)</option>
+                        <option value="diploma">Diploma/Certificate</option>
+                        <option value="bachelors">Bachelor's Degree</option>
+                        <option value="masters">Master's Degree</option>
+                        <option value="phd">PhD/Doctorate</option>
+                        <option value="professional">Professional Certification</option>
+                    </select>
+                    <div class="error" id="educationError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>📊 Academic Percentage</label>
+                    <input type="number" id="percentage" min="0" max="100" step="0.1" placeholder="Enter your percentage" required>
+                    <div class="error" id="percentageError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>⚡ Skills</label>
+                    <div class="input-with-button">
+                        <input type="text" id="skillInput" placeholder="Add a skill (e.g., Python, Design)" maxlength="50">
+                        <button type="button" class="add-btn" onclick="addSkill()">+</button>
+                    </div>
+                    <div class="tags-container" id="skillsTags"></div>
+                    <div class="error" id="skillsError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>❤️ Interests</label>
+                    <div class="input-with-button">
+                        <input type="text" id="interestInput" placeholder="Add an interest (e.g., Technology, Art)" maxlength="50">
+                        <button type="button" class="add-btn" onclick="addInterest()">+</button>
+                    </div>
+                    <div class="tags-container" id="interestsTags"></div>
+                    <div class="error" id="interestsError"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">Get Career Recommendations</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="results-page" id="resultsPage">
+        <div class="results-header">
+            <h2>Your Recommended Career Paths</h2>
+            <p>Click on any career to explore detailed roadmap & insights</p>
+            <button class="back-btn" onclick="goBack()">← Get New Recommendations</button>
+        </div>
+        <div id="careerResults"></div>
+    </div>
+
+    <script>
+        let skills = [];
+        let interests = [];
+
+        const careerDatabase = {
+            'Software Developer': {
+                skills: ['programming', 'coding', 'javascript', 'python', 'web development', 'software', 'computer science', 'algorithms', 'development', 'technology'],
+                interests: ['technology', 'computers', 'coding', 'problem solving', 'innovation', 'software', 'apps', 'websites'],
+                icon: '💻',
+                salaries: { entry: { min: 400000, max: 800000 }, experienced: { min: 1200000, max: 3500000 } },
+                requiredSkills: ['Programming Languages', 'Problem Solving', 'Software Architecture', 'Version Control', 'Testing', 'Debugging'],
+                insights: [
+                    'India is the global IT hub with 25% job growth projected',
+                    'Major demand in Bangalore, Hyderabad, Pune, and Chennai',
+                    'Strong opportunities in fintech, e-commerce, and startups',
+                    'Remote work culture widely adopted post-COVID'
+                ],
+                learning: [
+                    'Master programming languages like JavaScript, Python, or Java',
+                    'Build portfolio projects and contribute to open source',
+                    'Get certified in cloud platforms (AWS, Azure, GCP)',
+                    'Practice on coding platforms like HackerRank and LeetCode',
+                    'Join coding bootcamps and developer communities'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['HTML/CSS Basics', 'JavaScript Fundamentals', 'Git & GitHub', 'Basic Programming Logic'],
+                        resources: [
+                            { name: 'freeCodeCamp', url: 'https://www.freecodecamp.org', type: 'Free' },
+                            { name: 'MDN Web Docs', url: 'https://developer.mozilla.org', type: 'Free' },
+                            { name: 'Codecademy', url: 'https://www.codecademy.com', type: 'Freemium' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['React/Vue.js', 'Node.js', 'Database (SQL/MongoDB)', 'RESTful APIs'],
+                        resources: [
+                            { name: 'Udemy - Web Dev Bootcamp', url: 'https://www.udemy.com/topic/web-development', type: 'Paid' },
+                            { name: 'React Documentation', url: 'https://react.dev', type: 'Free' },
+                            { name: 'Scrimba', url: 'https://scrimba.com', type: 'Freemium' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['System Design', 'Cloud Platforms (AWS/Azure)', 'DevOps Basics', 'Testing & Security'],
+                        resources: [
+                            { name: 'AWS Training', url: 'https://aws.amazon.com/training', type: 'Free/Paid' },
+                            { name: 'LeetCode', url: 'https://leetcode.com', type: 'Freemium' },
+                            { name: 'Coursera - System Design', url: 'https://www.coursera.org/search?query=system%20design', type: 'Free/Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Microservices Architecture', 'Performance Optimization', 'Team Leadership', 'Open Source Contribution'],
+                        resources: [
+                            { name: 'GitHub', url: 'https://github.com', type: 'Free' },
+                            { name: 'Dev.to Community', url: 'https://dev.to', type: 'Free' },
+                            { name: 'Pluralsight', url: 'https://www.pluralsight.com', type: 'Paid' }
+                        ]
+                    }
+                ],
+                certifications: ['AWS Certified Developer', 'Google Cloud Professional', 'Microsoft Azure Developer', 'Meta Front-End Developer'],
+                progression: ['Junior Developer', 'Software Developer', 'Senior Developer', 'Tech Lead/Architect']
+            },
+            'Data Scientist': {
+                skills: ['data', 'analytics', 'statistics', 'python', 'r', 'machine learning', 'sql', 'mathematics', 'analysis', 'visualization'],
+                interests: ['data', 'research', 'analytics', 'mathematics', 'statistics', 'patterns', 'insights', 'technology'],
+                icon: '📊',
+                salaries: { entry: { min: 600000, max: 1200000 }, experienced: { min: 1800000, max: 4000000 } },
+                requiredSkills: ['Python/R', 'Machine Learning', 'Statistics', 'Data Visualization', 'SQL', 'Data Mining'],
+                insights: [
+                    'Fastest growing tech field in India with 40% annual growth',
+                    'High demand across banking, healthcare, and e-commerce',
+                    'AI/ML adoption driving massive opportunities',
+                    'Excellent career progression to senior data roles'
+                ],
+                learning: [
+                    'Master Python/R for data science and machine learning',
+                    'Learn statistical analysis and data visualization tools',
+                    'Get certified in cloud ML platforms and tools',
+                    'Work on real-world data science projects and competitions',
+                    'Join data science communities and attend meetups'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Python Basics', 'Statistics Fundamentals', 'SQL', 'Excel & Data Analysis'],
+                        resources: [
+                            { name: 'Kaggle Learn', url: 'https://www.kaggle.com/learn', type: 'Free' },
+                            { name: 'DataCamp', url: 'https://www.datacamp.com', type: 'Freemium' },
+                            { name: 'Khan Academy Statistics', url: 'https://www.khanacademy.org/math/statistics-probability', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Pandas & NumPy', 'Data Visualization (Matplotlib, Seaborn)', 'Probability & Statistics', 'Linear Algebra'],
+                        resources: [
+                            { name: 'Coursera - IBM Data Science', url: 'https://www.coursera.org/professional-certificates/ibm-data-science', type: 'Free/Paid' },
+                            { name: 'DataQuest', url: 'https://www.dataquest.io', type: 'Paid' },
+                            { name: '3Blue1Brown (YouTube)', url: 'https://www.youtube.com/@3blue1brown', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Machine Learning Algorithms', 'Deep Learning & Neural Networks', 'NLP', 'Big Data (Spark)'],
+                        resources: [
+                            { name: 'fast.ai', url: 'https://www.fast.ai', type: 'Free' },
+                            { name: 'DeepLearning.AI', url: 'https://www.deeplearning.ai', type: 'Paid' },
+                            { name: 'Towards Data Science', url: 'https://towardsdatascience.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['MLOps', 'Model Deployment', 'A/B Testing', 'Domain Expertise'],
+                        resources: [
+                            { name: 'Google Cloud ML Training', url: 'https://cloud.google.com/training/machinelearning-ai', type: 'Free/Paid' },
+                            { name: 'Papers with Code', url: 'https://paperswithcode.com', type: 'Free' },
+                            { name: 'Kaggle Competitions', url: 'https://www.kaggle.com/competitions', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['Google Data Analytics Professional', 'IBM Data Science Professional', 'Microsoft Azure Data Scientist', 'TensorFlow Developer Certificate'],
+                progression: ['Data Analyst', 'Data Scientist', 'Senior Data Scientist', 'Data Science Manager']
+            },
+            'Digital Marketing Specialist': {
+                skills: ['marketing', 'seo', 'social media', 'content', 'advertising', 'analytics', 'communication', 'writing'],
+                interests: ['marketing', 'social media', 'communication', 'creativity', 'business', 'trends', 'content creation'],
+                icon: '📱',
+                salaries: { entry: { min: 250000, max: 500000 }, experienced: { min: 600000, max: 1500000 } },
+                requiredSkills: ['SEO/SEM', 'Social Media Marketing', 'Content Creation', 'Google Analytics', 'PPC Advertising', 'Email Marketing'],
+                insights: [
+                    'Digital India initiative creating massive opportunities',
+                    'E-commerce boom driving high demand for digital marketers',
+                    'Excellent growth in tier-2 and tier-3 cities',
+                    'Startup ecosystem providing diverse opportunities'
+                ],
+                learning: [
+                    'Get certified in Google Ads, Analytics, and Facebook Blueprint',
+                    'Master SEO, content marketing, and social media strategies',
+                    'Learn marketing automation and email marketing tools',
+                    'Stay updated with latest digital marketing trends',
+                    'Build practical experience through internships and projects'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-2 months)',
+                        duration: '2 months',
+                        skills: ['Marketing Fundamentals', 'Social Media Basics', 'Content Writing', 'Google Analytics'],
+                        resources: [
+                            { name: 'Google Digital Garage', url: 'https://learndigital.withgoogle.com', type: 'Free' },
+                            { name: 'HubSpot Academy', url: 'https://academy.hubspot.com', type: 'Free' },
+                            { name: 'Facebook Blueprint', url: 'https://www.facebook.com/business/learn', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (2-5 months)',
+                        duration: '3 months',
+                        skills: ['SEO & SEM', 'PPC Advertising', 'Email Marketing', 'Marketing Analytics'],
+                        resources: [
+                            { name: 'Moz SEO Learning Center', url: 'https://moz.com/learn/seo', type: 'Free' },
+                            { name: 'Google Ads Skillshop', url: 'https://skillshop.withgoogle.com', type: 'Free' },
+                            { name: 'Udemy Marketing Courses', url: 'https://www.udemy.com/topic/digital-marketing', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (5-10 months)',
+                        duration: '5 months',
+                        skills: ['Marketing Automation', 'Conversion Optimization', 'Advanced Analytics', 'Brand Strategy'],
+                        resources: [
+                            { name: 'Coursera - Digital Marketing', url: 'https://www.coursera.org/specializations/digital-marketing', type: 'Free/Paid' },
+                            { name: 'Neil Patel Blog', url: 'https://neilpatel.com/blog', type: 'Free' },
+                            { name: 'CXL Institute', url: 'https://cxl.com', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (10+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Marketing Strategy', 'Team Leadership', 'Budget Management', 'Industry Specialization'],
+                        resources: [
+                            { name: 'Marketing Week', url: 'https://www.marketingweek.com', type: 'Free' },
+                            { name: 'LinkedIn Learning', url: 'https://www.linkedin.com/learning', type: 'Paid' },
+                            { name: 'Think with Google', url: 'https://www.thinkwithgoogle.com', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['Google Ads Certification', 'HubSpot Content Marketing', 'Facebook Blueprint Certification', 'Google Analytics Individual Qualification'],
+                progression: ['Marketing Associate', 'Digital Marketing Specialist', 'Marketing Manager', 'Marketing Director']
+            },
+            'UX/UI Designer': {
+                skills: ['design', 'ui', 'ux', 'figma', 'adobe xd', 'user research', 'wireframing', 'prototyping', 'visual design'],
+                interests: ['design', 'user experience', 'creativity', 'problem solving', 'aesthetics', 'technology', 'psychology'],
+                icon: '🎨',
+                salaries: { entry: { min: 350000, max: 700000 }, experienced: { min: 900000, max: 2500000 } },
+                requiredSkills: ['Design Tools (Figma/Adobe XD)', 'User Research', 'Wireframing', 'Prototyping', 'Visual Design', 'Accessibility'],
+                insights: [
+                    'Growing demand for digital experiences in Indian market',
+                    'Strong opportunities in startups and digital agencies',
+                    'Remote work and freelancing opportunities abundant',
+                    'Evolution toward full-stack design roles'
+                ],
+                learning: [
+                    'Master design tools like Figma, Adobe XD, and Sketch',
+                    'Learn user research and usability testing methods',
+                    'Study design principles and accessibility guidelines',
+                    'Build a strong portfolio with case studies',
+                    'Stay updated with latest design trends and tools'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Design Principles', 'Color Theory', 'Typography', 'Basic Figma/Adobe XD'],
+                        resources: [
+                            { name: 'Figma Tutorial', url: 'https://www.figma.com/resources/learn-design', type: 'Free' },
+                            { name: 'Google UX Design Course', url: 'https://www.coursera.org/professional-certificates/google-ux-design', type: 'Free/Paid' },
+                            { name: 'Laws of UX', url: 'https://lawsofux.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['User Research', 'Wireframing', 'Prototyping', 'Usability Testing'],
+                        resources: [
+                            { name: 'Interaction Design Foundation', url: 'https://www.interaction-design.org', type: 'Paid' },
+                            { name: 'UX Design Institute', url: 'https://www.uxdesigninstitute.com', type: 'Paid' },
+                            { name: 'Nielsen Norman Group', url: 'https://www.nngroup.com/articles', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Advanced Prototyping', 'Design Systems', 'Accessibility (WCAG)', 'Motion Design'],
+                        resources: [
+                            { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com', type: 'Free/Paid' },
+                            { name: 'A List Apart', url: 'https://alistapart.com', type: 'Free' },
+                            { name: 'Coursera - UI/UX Specialization', url: 'https://www.coursera.org/specializations/ui-ux-design', type: 'Free/Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Design Leadership', 'Strategic Thinking', 'Stakeholder Management', 'Industry Trends'],
+                        resources: [
+                            { name: 'Dribbble', url: 'https://dribbble.com', type: 'Freemium' },
+                            { name: 'Behance', url: 'https://www.behance.net', type: 'Free' },
+                            { name: 'UX Collective', url: 'https://uxdesign.cc', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['Google UX Design Professional Certificate', 'Adobe Certified Professional', 'Interaction Design Foundation Certificates', 'Nielsen Norman Group UX Certification'],
+                progression: ['Junior Designer', 'UX/UI Designer', 'Senior Designer', 'Design Lead']
+            },
+            'Product Manager': {
+                skills: ['product management', 'strategy', 'analytics', 'communication', 'agile', 'scrum', 'leadership', 'business'],
+                interests: ['business', 'technology', 'strategy', 'innovation', 'leadership', 'user experience', 'problem solving'],
+                icon: '📋',
+                salaries: { entry: { min: 800000, max: 1500000 }, experienced: { min: 2000000, max: 5000000 } },
+                requiredSkills: ['Product Strategy', 'User Research', 'Analytics', 'Project Management', 'Leadership', 'Technical Understanding'],
+                insights: [
+                    'Leadership role with excellent career progression',
+                    'High earning potential in Indian tech unicorns',
+                    'Strategic role connecting business and technology',
+                    'Growing demand in SaaS and fintech companies'
+                ],
+                learning: [
+                    'Learn product management frameworks and methodologies',
+                    'Develop strong analytical and data-driven decision making',
+                    'Master user research and customer development techniques',
+                    'Build technical understanding to work with engineering teams',
+                    'Network with product management community in India'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Product Fundamentals', 'User Research', 'Market Analysis', 'Basic Analytics'],
+                        resources: [
+                            { name: 'Product School', url: 'https://productschool.com', type: 'Free/Paid' },
+                            { name: 'Coursera - Product Management', url: 'https://www.coursera.org/specializations/product-management', type: 'Free/Paid' },
+                            { name: 'Product Coalition', url: 'https://productcoalition.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Roadmapping', 'Agile/Scrum', 'A/B Testing', 'Data-Driven Decision Making'],
+                        resources: [
+                            { name: 'Pragmatic Institute', url: 'https://www.pragmaticinstitute.com', type: 'Paid' },
+                            { name: 'Mind the Product', url: 'https://www.mindtheproduct.com', type: 'Free' },
+                            { name: 'Product Plan', url: 'https://www.productplan.com/learn', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Product Strategy', 'Stakeholder Management', 'Growth Frameworks', 'Pricing Strategy'],
+                        resources: [
+                            { name: 'Reforge', url: 'https://www.reforge.com', type: 'Paid' },
+                            { name: 'Lenny\'s Newsletter', url: 'https://www.lennysnewsletter.com', type: 'Free/Paid' },
+                            { name: 'Product Management Insider', url: 'https://www.productmanagementinsider.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Product Vision', 'Executive Communication', 'Team Building', 'Innovation Management'],
+                        resources: [
+                            { name: 'Harvard Business Review', url: 'https://hbr.org', type: 'Paid' },
+                            { name: 'Product Talk', url: 'https://www.producttalk.org', type: 'Free' },
+                            { name: 'First Round Review', url: 'https://review.firstround.com', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['Certified Scrum Product Owner (CSPO)', 'Pragmatic Marketing Certified', 'Product Management Certificate from top universities', 'Agile Certified Product Manager'],
+                progression: ['Associate Product Manager', 'Product Manager', 'Senior Product Manager', 'VP of Product']
+            },
+            'Cybersecurity Analyst': {
+                skills: ['security', 'networking', 'ethical hacking', 'penetration testing', 'linux', 'cryptography', 'firewall', 'security'],
+                interests: ['security', 'technology', 'problem solving', 'investigation', 'protection', 'hacking', 'networks'],
+                icon: '🔒',
+                salaries: { entry: { min: 450000, max: 900000 }, experienced: { min: 1400000, max: 3200000 } },
+                requiredSkills: ['Network Security', 'Ethical Hacking', 'Risk Assessment', 'Security Tools', 'Compliance', 'Incident Response'],
+                insights: [
+                    'Critical demand due to increasing cyber threats in India',
+                    'Government initiatives boosting cybersecurity sector',
+                    'High-paying field with excellent job security',
+                    'Growing demand across all industries'
+                ],
+                learning: [
+                    'Get certified in ethical hacking and cybersecurity (CEH, CISSP)',
+                    'Learn network security and penetration testing tools',
+                    'Understand compliance frameworks and risk management',
+                    'Practice on cybersecurity labs and capture-the-flag competitions',
+                    'Stay updated with latest security threats and technologies'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Networking Fundamentals', 'Linux Basics', 'Security Concepts', 'TCP/IP Protocol'],
+                        resources: [
+                            { name: 'Cybrary', url: 'https://www.cybrary.it', type: 'Freemium' },
+                            { name: 'TryHackMe', url: 'https://tryhackme.com', type: 'Freemium' },
+                            { name: 'Professor Messer', url: 'https://www.professormesser.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Ethical Hacking', 'Vulnerability Assessment', 'SIEM Tools', 'Incident Response'],
+                        resources: [
+                            { name: 'HackTheBox', url: 'https://www.hackthebox.com', type: 'Freemium' },
+                            { name: 'SANS Cyber Aces', url: 'https://www.cyberaces.org', type: 'Free' },
+                            { name: 'Udemy - Ethical Hacking', url: 'https://www.udemy.com/topic/ethical-hacking', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Penetration Testing', 'Malware Analysis', 'Cloud Security', 'Security Automation'],
+                        resources: [
+                            { name: 'OffSec Training', url: 'https://www.offensive-security.com', type: 'Paid' },
+                            { name: 'PentesterLab', url: 'https://pentesterlab.com', type: 'Freemium' },
+                            { name: 'OWASP', url: 'https://owasp.org', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Red Team Operations', 'Threat Hunting', 'Security Architecture', 'Compliance & Governance'],
+                        resources: [
+                            { name: 'SANS Institute', url: 'https://www.sans.org', type: 'Paid' },
+                            { name: 'Krebs on Security', url: 'https://krebsonsecurity.com', type: 'Free' },
+                            { name: 'Dark Reading', url: 'https://www.darkreading.com', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['CompTIA Security+', 'CEH (Certified Ethical Hacker)', 'CISSP', 'OSCP (Offensive Security Certified Professional)'],
+                progression: ['Security Analyst', 'Security Engineer', 'Senior Security Engineer', 'Security Architect']
+            },
+            'Cloud Engineer': {
+                skills: ['cloud', 'aws', 'azure', 'gcp', 'devops', 'docker', 'kubernetes', 'automation', 'infrastructure', 'networking'],
+                interests: ['technology', 'automation', 'infrastructure', 'cloud', 'scalability', 'systems', 'engineering'],
+                icon: '☁️',
+                salaries: { entry: { min: 500000, max: 1000000 }, experienced: { min: 1500000, max: 3500000 } },
+                requiredSkills: ['AWS/Azure/GCP', 'Docker & Kubernetes', 'Infrastructure as Code', 'CI/CD', 'Linux', 'Networking'],
+                insights: [
+                    'Cloud adoption growing at 30% annually in India',
+                    'High demand from startups to enterprises',
+                    'Multi-cloud expertise highly valued',
+                    'Excellent remote work opportunities'
+                ],
+                learning: [
+                    'Get certified in major cloud platforms (AWS, Azure, GCP)',
+                    'Master containerization with Docker and Kubernetes',
+                    'Learn Infrastructure as Code tools (Terraform, CloudFormation)',
+                    'Understand CI/CD pipelines and DevOps practices',
+                    'Build projects showcasing cloud architecture skills'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Cloud Basics', 'Linux Administration', 'Networking Fundamentals', 'Version Control (Git)'],
+                        resources: [
+                            { name: 'AWS Cloud Practitioner', url: 'https://aws.amazon.com/certification/certified-cloud-practitioner', type: 'Free/Paid' },
+                            { name: 'Linux Journey', url: 'https://linuxjourney.com', type: 'Free' },
+                            { name: 'Coursera - Cloud Computing Basics', url: 'https://www.coursera.org/learn/cloud-computing-basics', type: 'Free/Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Docker & Containerization', 'Kubernetes Basics', 'Terraform', 'AWS/Azure Services'],
+                        resources: [
+                            { name: 'Docker Documentation', url: 'https://docs.docker.com', type: 'Free' },
+                            { name: 'Kubernetes.io Tutorials', url: 'https://kubernetes.io/docs/tutorials', type: 'Free' },
+                            { name: 'A Cloud Guru', url: 'https://acloudguru.com', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Multi-Cloud Architecture', 'Monitoring & Logging', 'Security & Compliance', 'Cost Optimization'],
+                        resources: [
+                            { name: 'AWS Solutions Architect', url: 'https://aws.amazon.com/certification/certified-solutions-architect-associate', type: 'Paid' },
+                            { name: 'Cloud Academy', url: 'https://cloudacademy.com', type: 'Paid' },
+                            { name: 'Prometheus & Grafana Docs', url: 'https://prometheus.io', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Cloud Native Architecture', 'Service Mesh', 'Advanced Kubernetes', 'Cloud Governance'],
+                        resources: [
+                            { name: 'CNCF Landscape', url: 'https://landscape.cncf.io', type: 'Free' },
+                            { name: 'HashiCorp Learn', url: 'https://learn.hashicorp.com', type: 'Free' },
+                            { name: 'Linux Foundation Training', url: 'https://training.linuxfoundation.org', type: 'Paid' }
+                        ]
+                    }
+                ],
+                certifications: ['AWS Solutions Architect', 'Azure Administrator', 'Google Cloud Professional', 'CKA (Certified Kubernetes Administrator)'],
+                progression: ['Junior Cloud Engineer', 'Cloud Engineer', 'Senior Cloud Engineer', 'Cloud Architect']
+            },
+            'Business Analyst': {
+                skills: ['analysis', 'requirements', 'sql', 'excel', 'data analysis', 'business', 'communication', 'documentation', 'agile'],
+                interests: ['business', 'analysis', 'problem solving', 'data', 'strategy', 'communication', 'improvement'],
+                icon: '📈',
+                salaries: { entry: { min: 400000, max: 800000 }, experienced: { min: 1200000, max: 2800000 } },
+                requiredSkills: ['Business Analysis', 'SQL & Excel', 'Requirements Gathering', 'Data Visualization', 'Agile/Scrum', 'Stakeholder Management'],
+                insights: [
+                    'Bridge between business and technology teams',
+                    'Growing demand in IT and consulting firms',
+                    'Opportunities across all industries',
+                    'Strong pathway to product management roles'
+                ],
+                learning: [
+                    'Master SQL and Excel for data analysis',
+                    'Learn business analysis frameworks and methodologies',
+                    'Get certified in Agile and business analysis (CBAP, PMI-PBA)',
+                    'Develop strong communication and presentation skills',
+                    'Work on real business case studies and projects'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Excel Advanced', 'SQL Basics', 'Business Fundamentals', 'Data Analysis'],
+                        resources: [
+                            { name: 'LinkedIn Learning - Excel', url: 'https://www.linkedin.com/learning/topics/microsoft-excel', type: 'Paid' },
+                            { name: 'Khan Academy - SQL', url: 'https://www.khanacademy.org/computing/computer-programming/sql', type: 'Free' },
+                            { name: 'Coursera - Business Analytics', url: 'https://www.coursera.org/specializations/business-analytics', type: 'Free/Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Requirements Gathering', 'Process Mapping', 'Tableau/Power BI', 'Agile Methodologies'],
+                        resources: [
+                            { name: 'IIBA Resources', url: 'https://www.iiba.org', type: 'Free/Paid' },
+                            { name: 'Tableau Public', url: 'https://public.tableau.com', type: 'Free' },
+                            { name: 'Udemy - Business Analysis', url: 'https://www.udemy.com/topic/business-analysis', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Advanced Analytics', 'Business Strategy', 'Stakeholder Management', 'Project Management'],
+                        resources: [
+                            { name: 'HBR - Business Strategy', url: 'https://hbr.org', type: 'Paid' },
+                            { name: 'Scrum.org Training', url: 'https://www.scrum.org', type: 'Free/Paid' },
+                            { name: 'DataCamp - Business Analytics', url: 'https://www.datacamp.com', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Digital Transformation', 'Enterprise Architecture', 'Change Management', 'Strategic Planning'],
+                        resources: [
+                            { name: 'PMI Resources', url: 'https://www.pmi.org', type: 'Paid' },
+                            { name: 'MIT Sloan Management Review', url: 'https://sloanreview.mit.edu', type: 'Free/Paid' },
+                            { name: 'BA Times', url: 'https://www.batimes.com', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['CBAP (Certified Business Analysis Professional)', 'PMI-PBA', 'Agile Analysis Certification', 'IIBA Certifications'],
+                progression: ['Junior Business Analyst', 'Business Analyst', 'Senior Business Analyst', 'Business Analysis Manager']
+            },
+            'Content Writer': {
+                skills: ['writing', 'content', 'copywriting', 'seo', 'editing', 'research', 'creativity', 'storytelling', 'blogging'],
+                interests: ['writing', 'creativity', 'communication', 'storytelling', 'reading', 'research', 'digital media'],
+                icon: '✍️',
+                salaries: { entry: { min: 250000, max: 500000 }, experienced: { min: 600000, max: 1500000 } },
+                requiredSkills: ['Creative Writing', 'SEO Writing', 'Content Strategy', 'Editing & Proofreading', 'Research Skills', 'CMS Platforms'],
+                insights: [
+                    'Booming demand due to content marketing growth',
+                    'Excellent freelance and remote opportunities',
+                    'Multiple niches: tech, finance, healthcare, lifestyle',
+                    'AI tools augmenting rather than replacing writers'
+                ],
+                learning: [
+                    'Develop strong grammar and storytelling skills',
+                    'Master SEO and content marketing principles',
+                    'Learn popular CMS platforms (WordPress, HubSpot)',
+                    'Build a diverse portfolio across different content types',
+                    'Stay updated with content trends and AI writing tools'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Grammar & Style', 'Content Types', 'Basic SEO', 'Research Methods'],
+                        resources: [
+                            { name: 'Grammarly Blog', url: 'https://www.grammarly.com/blog', type: 'Free' },
+                            { name: 'Copyblogger', url: 'https://copyblogger.com', type: 'Free' },
+                            { name: 'Hemingway Editor', url: 'https://hemingwayapp.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['SEO Writing', 'Content Strategy', 'WordPress', 'Social Media Writing'],
+                        resources: [
+                            { name: 'HubSpot Academy', url: 'https://academy.hubspot.com', type: 'Free' },
+                            { name: 'Moz SEO Learning', url: 'https://moz.com/learn/seo', type: 'Free' },
+                            { name: 'Udemy - Content Writing', url: 'https://www.udemy.com/topic/content-writing', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Technical Writing', 'Long-form Content', 'Content Analytics', 'Brand Voice Development'],
+                        resources: [
+                            { name: 'Content Marketing Institute', url: 'https://contentmarketinginstitute.com', type: 'Free' },
+                            { name: 'Google Analytics Academy', url: 'https://analytics.google.com/analytics/academy', type: 'Free' },
+                            { name: 'Masterclass - Writing', url: 'https://www.masterclass.com/categories/writing', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Content Leadership', 'Multi-channel Strategy', 'Team Management', 'AI-Assisted Writing'],
+                        resources: [
+                            { name: 'Medium - Writing Community', url: 'https://medium.com', type: 'Free/Paid' },
+                            { name: 'Writers Work', url: 'https://writers.work', type: 'Paid' },
+                            { name: 'ProWritingAid Blog', url: 'https://prowritingaid.com/blog', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['HubSpot Content Marketing', 'Google Analytics Certification', 'Content Marketing Certification', 'Technical Writing Certification'],
+                progression: ['Junior Content Writer', 'Content Writer', 'Senior Content Writer', 'Content Manager/Editor']
+            },
+            'Mobile App Developer': {
+                skills: ['mobile', 'android', 'ios', 'swift', 'kotlin', 'react native', 'flutter', 'java', 'programming', 'ui'],
+                interests: ['mobile', 'apps', 'technology', 'design', 'programming', 'innovation', 'user experience'],
+                icon: '📱',
+                salaries: { entry: { min: 350000, max: 700000 }, experienced: { min: 1000000, max: 2500000 } },
+                requiredSkills: ['iOS/Android Development', 'Swift/Kotlin', 'React Native/Flutter', 'UI/UX Design', 'API Integration', 'Mobile Testing'],
+                insights: [
+                    'India has 750M+ smartphone users, driving massive demand',
+                    'Startup ecosystem creating abundant opportunities',
+                    'Cross-platform development highly valued',
+                    'Growing opportunities in fintech and e-commerce apps'
+                ],
+                learning: [
+                    'Choose a platform: Native (iOS/Android) or Cross-platform (Flutter/React Native)',
+                    'Master mobile UI/UX design principles',
+                    'Learn mobile app architecture and best practices',
+                    'Publish apps on App Store and Google Play',
+                    'Stay updated with latest mobile development trends'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Programming Basics (Java/Kotlin/Swift)', 'Mobile UI Fundamentals', 'Git Version Control', 'Development Environment Setup'],
+                        resources: [
+                            { name: 'Android Developers', url: 'https://developer.android.com', type: 'Free' },
+                            { name: 'Swift Playgrounds', url: 'https://www.apple.com/swift/playgrounds', type: 'Free' },
+                            { name: 'Udacity - Android Basics', url: 'https://www.udacity.com/course/android-basics-nanodegree', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Flutter/React Native', 'API Integration', 'State Management', 'Local Storage'],
+                        resources: [
+                            { name: 'Flutter Documentation', url: 'https://flutter.dev/docs', type: 'Free' },
+                            { name: 'React Native Docs', url: 'https://reactnative.dev', type: 'Free' },
+                            { name: 'Coursera - Mobile Dev', url: 'https://www.coursera.org/specializations/android-app-development', type: 'Free/Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Advanced Architecture (MVVM/Clean)', 'Performance Optimization', 'Security Best Practices', 'CI/CD for Mobile'],
+                        resources: [
+                            { name: 'Ray Wenderlich', url: 'https://www.raywenderlich.com', type: 'Free/Paid' },
+                            { name: 'Kodeco (iOS)', url: 'https://www.kodeco.com', type: 'Free/Paid' },
+                            { name: 'Firebase Documentation', url: 'https://firebase.google.com/docs', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['App Store Optimization', 'Monetization Strategies', 'Advanced Testing', 'Team Leadership'],
+                        resources: [
+                            { name: 'App Store Connect', url: 'https://developer.apple.com/app-store-connect', type: 'Free' },
+                            { name: 'Google Play Console', url: 'https://play.google.com/console', type: 'Free' },
+                            { name: 'Mobile Dev Memo', url: 'https://mobiledevmemo.com', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['Google Associate Android Developer', 'Meta React Native Specialization', 'AWS Mobile Developer', 'Flutter Certification'],
+                progression: ['Junior Mobile Developer', 'Mobile App Developer', 'Senior Mobile Developer', 'Mobile Architect']
+            },
+            'HR Manager': {
+                skills: ['hr', 'recruitment', 'people management', 'communication', 'training', 'employee relations', 'hiring', 'leadership'],
+                interests: ['people', 'management', 'psychology', 'communication', 'organization', 'development', 'culture'],
+                icon: '👥',
+                salaries: { entry: { min: 350000, max: 600000 }, experienced: { min: 800000, max: 2000000 } },
+                requiredSkills: ['Talent Acquisition', 'Employee Relations', 'Performance Management', 'HR Analytics', 'Labor Laws', 'Training & Development'],
+                insights: [
+                    'Essential role in every growing organization',
+                    'Focus shifting to employee experience and culture',
+                    'HR tech and analytics becoming critical skills',
+                    'Strong demand in startups and established companies'
+                ],
+                learning: [
+                    'Understand HR fundamentals and employment laws',
+                    'Get certified in HR management (SHRM, PHR)',
+                    'Learn HR software and analytics tools',
+                    'Develop strong interpersonal and communication skills',
+                    'Stay updated with HR trends and best practices'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['HR Basics', 'Recruitment Fundamentals', 'Labor Laws', 'Communication Skills'],
+                        resources: [
+                            { name: 'SHRM Learning', url: 'https://www.shrm.org/learning', type: 'Free/Paid' },
+                            { name: 'LinkedIn Learning - HR', url: 'https://www.linkedin.com/learning/topics/human-resources', type: 'Paid' },
+                            { name: 'Coursera - HR Management', url: 'https://www.coursera.org/courses?query=human%20resources', type: 'Free/Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Talent Acquisition', 'Performance Management', 'HR Software (BambooHR/Workday)', 'Compensation & Benefits'],
+                        resources: [
+                            { name: 'HR University', url: 'https://www.hru.gov', type: 'Free' },
+                            { name: 'AIHR Academy', url: 'https://www.aihr.com', type: 'Paid' },
+                            { name: 'HR Bartender', url: 'https://www.hrbartender.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['HR Analytics', 'Organizational Development', 'Change Management', 'Strategic HR Planning'],
+                        resources: [
+                            { name: 'People Analytics', url: 'https://www.coursera.org/learn/wharton-people-analytics', type: 'Free/Paid' },
+                            { name: 'CIPD Resources', url: 'https://www.cipd.co.uk', type: 'Free/Paid' },
+                            { name: 'HR Dive', url: 'https://www.hrdive.com', type: 'Free' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Executive Leadership', 'HR Technology', 'DEI Initiatives', 'Business Partnership'],
+                        resources: [
+                            { name: 'Harvard Business Review', url: 'https://hbr.org/topic/human-resource-management', type: 'Paid' },
+                            { name: 'HR Technologist', url: 'https://www.hrtechnologist.com', type: 'Free' },
+                            { name: 'SHRM Annual Conference', url: 'https://www.shrm.org', type: 'Paid' }
+                        ]
+                    }
+                ],
+                certifications: ['SHRM-CP/SCP', 'PHR/SPHR', 'CIPD Certification', 'People Analytics Certification'],
+                progression: ['HR Executive', 'HR Manager', 'Senior HR Manager', 'HR Director/CHRO']
+            },
+            'Graphic Designer': {
+                skills: ['design', 'graphics', 'photoshop', 'illustrator', 'creativity', 'branding', 'visual', 'typography', 'layout'],
+                interests: ['art', 'design', 'creativity', 'visual', 'aesthetics', 'branding', 'digital media'],
+                icon: '🎨',
+                salaries: { entry: { min: 250000, max: 500000 }, experienced: { min: 600000, max: 1500000 } },
+                requiredSkills: ['Adobe Creative Suite', 'Typography', 'Branding', 'Layout Design', 'Color Theory', 'UI/UX Basics'],
+                insights: [
+                    'Growing demand in digital marketing and e-commerce',
+                    'Excellent freelance opportunities',
+                    'Multiple specializations: branding, web, motion graphics',
+                    'Strong portfolio is key to success'
+                ],
+                learning: [
+                    'Master Adobe Creative Suite (Photoshop, Illustrator, InDesign)',
+                    'Learn design principles and color theory',
+                    'Build a strong, diverse portfolio',
+                    'Understand branding and visual identity',
+                    'Stay updated with design trends and tools'
+                ],
+                roadmap: [
+                    {
+                        phase: 'Foundation (0-3 months)',
+                        duration: '3 months',
+                        skills: ['Design Principles', 'Adobe Photoshop', 'Adobe Illustrator', 'Typography Basics'],
+                        resources: [
+                            { name: 'Adobe Creative Cloud Tutorials', url: 'https://helpx.adobe.com/support.html', type: 'Free' },
+                            { name: 'Canva Design School', url: 'https://www.canva.com/designschool', type: 'Free' },
+                            { name: 'Skillshare - Graphic Design', url: 'https://www.skillshare.com/browse/graphic-design', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Intermediate (3-6 months)',
+                        duration: '3 months',
+                        skills: ['Branding & Identity', 'Layout Design', 'InDesign', 'Digital Illustration'],
+                        resources: [
+                            { name: 'Behance', url: 'https://www.behance.net', type: 'Free' },
+                            { name: 'Dribbble', url: 'https://dribbble.com', type: 'Free' },
+                            { name: 'LinkedIn Learning - Design', url: 'https://www.linkedin.com/learning/topics/graphic-design', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Advanced (6-12 months)',
+                        duration: '6 months',
+                        skills: ['Motion Graphics', 'UI/UX Design', '3D Design', 'Advanced Branding'],
+                        resources: [
+                            { name: 'After Effects Tutorials', url: 'https://helpx.adobe.com/after-effects/tutorials.html', type: 'Free' },
+                            { name: 'Figma Community', url: 'https://www.figma.com/community', type: 'Free' },
+                            { name: 'Domestika', url: 'https://www.domestika.org', type: 'Paid' }
+                        ]
+                    },
+                    {
+                        phase: 'Professional (12+ months)',
+                        duration: 'Ongoing',
+                        skills: ['Art Direction', 'Client Management', 'Design Strategy', 'Team Leadership'],
+                        resources: [
+                            { name: 'Creative Bloq', url: 'https://www.creativebloq.com', type: 'Free' },
+                            { name: 'Awwwards', url: 'https://www.awwwards.com', type: 'Free' },
+                            { name: 'Design Matters Podcast', url: 'https://www.designmattersmedia.com', type: 'Free' }
+                        ]
+                    }
+                ],
+                certifications: ['Adobe Certified Professional', 'Google UX Design Certificate', 'Interaction Design Foundation', 'Graphic Design Specialization'],
+                progression: ['Junior Graphic Designer', 'Graphic Designer', 'Senior Graphic Designer', 'Art Director/Creative Director']
+            }
+        };
+
+        function addSkill() {
+            const input = document.getElementById('skillInput');
+            const value = input.value.trim();
+            
+            if (value && !skills.includes(value.toLowerCase())) {
+                skills.push(value.toLowerCase());
+                renderTags('skillsTags', skills, removeSkill);
+                input.value = '';
+                document.getElementById('skillsError').textContent = '';
+            }
+        }
+
+        function addInterest() {
+            const input = document.getElementById('interestInput');
+            const value = input.value.trim();
+            
+            if (value && !interests.includes(value.toLowerCase())) {
+                interests.push(value.toLowerCase());
+                renderTags('interestsTags', interests, removeInterest);
+                input.value = '';
+                document.getElementById('interestsError').textContent = '';
+            }
+        }
+
+        function removeSkill(index) {
+            skills.splice(index, 1);
+            renderTags('skillsTags', skills, removeSkill);
+        }
+
+        function removeInterest(index) {
+            interests.splice(index, 1);
+            renderTags('interestsTags', interests, removeInterest);
+        }
+
+        function renderTags(containerId, items, removeFunction) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = items.map((item, index) => `
+                <div class="tag">
+                    ${item}
+                    <button class="remove-btn" onclick="${removeFunction.name}(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('skillInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSkill();
+            }
+        });
+
+        document.getElementById('interestInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addInterest();
+            }
+        });
+
+        document.getElementById('careerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            document.querySelectorAll('.error').forEach(el => el.textContent = '');
+            
+            let isValid = true;
+            
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                document.getElementById('nameError').textContent = 'Please enter your name';
+                isValid = false;
+            }
+            
+            const education = document.getElementById('education').value;
+            if (!education) {
+                document.getElementById('educationError').textContent = 'Please select your education level';
+                isValid = false;
+            }
+            
+            const percentage = document.getElementById('percentage').value;
+            if (!percentage || percentage < 0 || percentage > 100) {
+                document.getElementById('percentageError').textContent = 'Please enter a valid percentage (0-100)';
+                isValid = false;
+            }
+            
+            if (skills.length === 0) {
+                document.getElementById('skillsError').textContent = 'Please add at least one skill';
+                isValid = false;
+            }
+            
+            if (interests.length === 0) {
+                document.getElementById('interestsError').textContent = 'Please add at least one interest';
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            document.getElementById('loadingOverlay').classList.add('show');
+            
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            const userData = {
+                name,
+                education,
+                percentage: parseFloat(percentage),
+                skills,
+                interests
+            };
+            
+            const matches = calculateCareerMatches();
+            
+            // Save to history
+            saveToHistory(userData);
+            
+            displayResults(matches, userData);
+            
+            document.getElementById('loadingOverlay').classList.remove('show');
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('resultsPage').classList.add('show');
+        });
+
+        function calculateCareerMatches() {
+            const matches = [];
+            
+            for (const [careerName, careerData] of Object.entries(careerDatabase)) {
+                let matchScore = 0;
+                let matchedSkills = 0;
+                let matchedInterests = 0;
+                
+                skills.forEach(skill => {
+                    if (careerData.skills.some(cs => cs.includes(skill) || skill.includes(cs))) {
+                        matchedSkills++;
+                    }
+                });
+                
+                interests.forEach(interest => {
+                    if (careerData.interests.some(ci => ci.includes(interest) || interest.includes(ci))) {
+                        matchedInterests++;
+                    }
+                });
+                
+                const skillMatch = skills.length > 0 ? (matchedSkills / skills.length) * 60 : 0;
+                const interestMatch = interests.length > 0 ? (matchedInterests / interests.length) * 40 : 0;
+                matchScore = Math.round(skillMatch + interestMatch);
+                
+                if (matchScore > 0) {
+                    matches.push({
+                        name: careerName,
+                        data: careerData,
+                        score: matchScore
+                    });
+                }
+            }
+            
+            matches.sort((a, b) => b.score - a.score);
+            
+            return matches.slice(0, 3);
+        }
+
+        function toggleCareer(index) {
+            const card = document.getElementById(`career-${index}`);
+            card.classList.toggle('expanded');
+        }
+
+        function displayResults(matches, userData) {
+            const resultsContainer = document.getElementById('careerResults');
+            
+            if (matches.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <h3 style="color: #94a3b8; margin-bottom: 20px;">No matching careers found</h3>
+                        <p style="color: #64748b;">Try adding more skills or interests to get better recommendations.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultsContainer.innerHTML = matches.map((match, index) => {
+                const matchingSkills = [];
+                const matchingInterests = [];
+                
+                userData.skills.forEach(skill => {
+                    match.data.skills.forEach(careerSkill => {
+                        if (skill.toLowerCase().includes(careerSkill) || careerSkill.includes(skill.toLowerCase())) {
+                            if (!matchingSkills.includes(skill)) {
+                                matchingSkills.push(skill);
+                            }
+                        }
+                    });
+                });
+                
+                userData.interests.forEach(interest => {
+                    match.data.interests.forEach(careerInterest => {
+                        if (interest.toLowerCase().includes(careerInterest) || careerInterest.includes(interest.toLowerCase())) {
+                            if (!matchingInterests.includes(interest)) {
+                                matchingInterests.push(interest);
+                            }
+                        }
+                    });
+                });
+                
+                const strengths = [];
+                matchingSkills.slice(0, 3).forEach(skill => {
+                    strengths.push(`Strong ${skill} background`);
+                });
+                matchingInterests.slice(0, 2).forEach(interest => {
+                    strengths.push(`Genuine interest in ${interest}`);
+                });
+                if (userData.percentage >= 80) strengths.push('Excellent academic performance');
+                else if (userData.percentage >= 70) strengths.push('Good academic foundation');
+                
+                const developmentAreas = [];
+                match.data.requiredSkills.forEach(reqSkill => {
+                    const hasSkill = userData.skills.some(userSkill => 
+                        userSkill.toLowerCase().includes(reqSkill.toLowerCase()) || 
+                        reqSkill.toLowerCase().includes(userSkill.toLowerCase())
+                    );
+                    if (!hasSkill && developmentAreas.length < 4) {
+                        developmentAreas.push(`Develop ${reqSkill} expertise`);
+                    }
+                });
+                developmentAreas.push('Industry-specific certifications');
+                
+                return `
+                    <div class="career-card-compact" id="career-${index}" onclick="toggleCareer(${index})">
+                        <div class="career-card-header">
+                            <div class="career-title-section">
+                                <div class="career-icon">${match.data.icon}</div>
+                                <div class="career-title-info">
+                                    <h3 class="career-title">${match.name}</h3>
+                                    <div class="career-quick-info">
+                                        <div class="match-badge">${match.score}% Match</div>
+                                        <div class="salary-badge">₹${formatSalary(match.data.salaries.entry.min)} - ₹${formatSalary(match.data.salaries.experienced.max)}</div>
+                                    </div>
+                                    <div class="click-hint">Click to expand full details & roadmap</div>
+                                </div>
+                            </div>
+                            <div class="expand-icon">▼</div>
+                        </div>
+                        
+                        <div class="career-details">
+                            <div class="career-content">
+                                <div class="career-description">
+                                    <strong>⭐ Why This Career Matches Your Profile:</strong><br>
+                                    Based on your profile as a ${userData.education.replace('_', ' ')} student with ${userData.percentage}% performance, ${match.name} is an excellent match. Your skills in ${matchingSkills.slice(0, 3).join(', ') || 'various areas'} directly align with this career's requirements, and your interests in ${matchingInterests.slice(0, 2).join(' and ') || 'related fields'} make this field engaging for you.
+                                </div>
+                                
+                                <div class="two-column-layout">
+                                    <div class="info-section">
+                                        <h3 class="section-title">📈 Your Matching Strengths</h3>
+                                        <ul class="strengths-list">
+                                            ${strengths.slice(0, 5).map(s => `<li>${s}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="info-section">
+                                        <h3 class="section-title">🎯 Skills to Develop</h3>
+                                        <ul class="development-list">
+                                            ${developmentAreas.slice(0, 5).map(d => `<li>${d}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="info-section">
+                                        <h3 class="section-title">💼 Career Progression Path</h3>
+                                        <div class="progression-path">
+                                            ${match.data.progression.map((step, i) => `
+                                                <div class="progression-step">
+                                                    <div class="step-number">${i + 1}</div>
+                                                    <div class="step-title">${step}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="info-section">
+                                        <h3 class="section-title">🛠️ Essential Skills</h3>
+                                        <div class="skill-tags">
+                                            ${match.data.requiredSkills.map(skill => 
+                                                `<div class="skill-tag">${skill}</div>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-section" style="margin-bottom: 20px;">
+                                    <h3 class="section-title">💰 Salary Range in India</h3>
+                                    <div class="salary-grid">
+                                        <div class="salary-box">
+                                            <div class="salary-label">Entry Level (0-2 years)</div>
+                                            <div class="salary-amount">₹${formatSalary(match.data.salaries.entry.min)} - ₹${formatSalary(match.data.salaries.entry.max)}</div>
+                                        </div>
+                                        <div class="salary-box">
+                                            <div class="salary-label">Experienced (5+ years)</div>
+                                            <div class="salary-amount">₹${formatSalary(match.data.salaries.experienced.min)} - ₹${formatSalary(match.data.salaries.experienced.max)}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="industry-insights">
+                                        <h4>📊 Indian Industry Outlook</h4>
+                                        ${match.data.insights.map(insight => 
+                                            `<div class="insight-item">${insight}</div>`
+                                        ).join('')}
+                                    </div>
+                                </div>
+                                
+                                <div class="info-section">
+                                    <h3 class="section-title">📚 Personalized Learning Path</h3>
+                                    <ul class="strengths-list">
+                                        ${match.data.learning.map(item => `<li>${item}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div class="roadmap-section">
+                                    <h3 class="section-title">🗺️ Complete Learning Roadmap with Resources</h3>
+                                    
+                                    ${match.data.roadmap.map((phase, phaseIndex) => `
+                                        <div class="phase-card">
+                                            <div class="phase-header">
+                                                <div class="phase-number">${phaseIndex + 1}</div>
+                                                <div class="phase-info">
+                                                    <h4>${phase.phase}</h4>
+                                                    <div class="phase-duration">⏱️ ${phase.duration}</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="skills-section">
+                                                <h5>📚 Skills to Learn</h5>
+                                                <div class="skill-tags">
+                                                    ${phase.skills.map(skill => `<div class="skill-tag">${skill}</div>`).join('')}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="resources-section">
+                                                <h5>🔗 Recommended Resources</h5>
+                                                <div class="resources-grid">
+                                                    ${phase.resources.map(resource => `
+                                                        <a href="${resource.url}" target="_blank" class="resource-card">
+                                                            <div class="resource-name">${resource.name}</div>
+                                                            <span class="resource-type type-${resource.type.toLowerCase().replace(/\//g, '-').replace(/ /g, '-')}">${resource.type}</span>
+                                                        </a>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                    
+                                    <div class="certifications-section">
+                                        <h4>🏆 Recommended Certifications</h4>
+                                        <div class="cert-grid">
+                                            ${match.data.certifications.map(cert => `
+                                                <div class="cert-item">
+                                                    <span>✓</span>
+                                                    <span>${cert}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatSalary(amount) {
+            if (amount >= 100000) {
+                return (amount / 100000).toFixed(1) + 'L';
+            }
+            return amount.toLocaleString('en-IN');
+        }
+
+        // Save search to history
+        function saveToHistory(userData) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            const historyKey = `careerHistory_${currentUser.email}`;
+            let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+
+            const historyEntry = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                name: userData.name,
+                education: userData.education,
+                experience: userData.percentage,
+                location: 'India', // Default location
+                skills: userData.skills,
+                interests: userData.interests.join(', ')
+            };
+
+            history.unshift(historyEntry); // Add to beginning
+            
+            // Keep only last 50 searches to prevent localStorage overflow
+            if (history.length > 50) {
+                history = history.slice(0, 50);
+            }
+
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        }
+
+        function goBack() {
+            document.getElementById('resultsPage').classList.remove('show');
+            document.getElementById('mainPage').style.display = 'block';
+            
+            document.getElementById('careerForm').reset();
+            skills = [];
+            interests = [];
+            document.getElementById('skillsTags').innerHTML = '';
+            document.getElementById('interestsTags').innerHTML = '';
+        }
+
+        // Authentication functionality
+        function updateAuthSection() {
+            const authSection = document.getElementById('authSection');
+            const currentUser = localStorage.getItem('currentUser');
+
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                authSection.innerHTML = `
+                    <div class="user-info">
+                        <a href="history.html" class="history-link">📚 History</a>
+                        <span class="user-name">👋 ${user.name}</span>
+                        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                    </div>
+                `;
+            } else {
+                authSection.innerHTML = `
+                    <a href="Auth.html" class="auth-link">Login / Register</a>
+                `;
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                alert('You have been logged out successfully!');
+                window.location.href = 'auth.html';
+            }
+        }
+
+        // Check authentication on page load
+        function checkAuthentication() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                // User not logged in, redirect to auth page
+                alert('Please login or register to access the AI Career Guide');
+                window.location.href = 'Auth.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Load history item if coming from history page
+        function loadHistoryItem() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('fromHistory') === 'true') {
+                const historyItem = sessionStorage.getItem('viewHistoryItem');
+                if (historyItem) {
+                    const item = JSON.parse(historyItem);
+                    
+                    // Populate form with history data
+                    if (item.name) document.getElementById('name').value = item.name;
+                    if (item.education) document.getElementById('education').value = item.education;
+                    if (item.experience) document.getElementById('percentage').value = item.experience;
+                    
+                    // Populate skills
+                    if (item.skills && item.skills.length > 0) {
+                        skills = [...item.skills];
+                        renderTags('skillsTags', skills, removeSkill);
+                    }
+                    
+                    // Populate interests
+                    if (item.interests) {
+                        const interestArray = item.interests.split(',').map(i => i.trim().toLowerCase()).filter(i => i);
+                        interests = interestArray;
+                        renderTags('interestsTags', interests, removeInterest);
+                    }
+                    
+                    // Clear the session storage
+                    sessionStorage.removeItem('viewHistoryItem');
+                    
+                    // Scroll to form
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        }
+
+        // Initialize auth section on page load
+        window.addEventListener('load', () => {
+            if (checkAuthentication()) {
+                updateAuthSection();
+                loadHistoryItem();
+            }
+        });
+    </script>
+</body>
+</html>
